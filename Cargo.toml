@@ -6,3 +6,5 @@ edition = "2018"
 
 [dependencies]
 rand = "0.3.14"
+enum-map = "*"
+enum-map-derive = "*"
