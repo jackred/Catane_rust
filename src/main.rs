@@ -36,7 +36,6 @@ trait Buyable {
 mod development_card {
     type DevelopmentDeck =  super::EnumMap<DevelopmentCardValue, i32>;
 
-    
     #[derive(Debug, Enum, Clone)]
     pub enum DevelopmentCardValue {
         Knight,
@@ -50,16 +49,16 @@ mod development_card {
         Library,
     }
     
-    fn knightAction() {
+    fn knight_action() {
         println!("knight");
     }
-    fn roadBuildingAction() {
+    fn road_building_action() {
         println!("road building");
     }
-    fn yearOfPlentyAction() {
+    fn year_of_plenty_action() {
         println!("year of plenty");
     }
-    fn monopolyAction() {
+    fn monopoly_action() {
         println!("monopoly");
     }
 
@@ -101,16 +100,17 @@ mod development_card {
         
         pub fn effect(&self) {
             match self.value {
-                DevelopmentCardValue::Knight => knightAction(),
-                DevelopmentCardValue::RoadBuilding => roadBuildingAction(),
-                DevelopmentCardValue::YearOfPlenty => yearOfPlentyAction(),
-                DevelopmentCardValue::Monopoly => monopolyAction(),
+                DevelopmentCardValue::Knight => knight_action(),
+                DevelopmentCardValue::RoadBuilding => road_building_action(),
+                DevelopmentCardValue::YearOfPlenty => year_of_plenty_action(),
+                DevelopmentCardValue::Monopoly => monopoly_action(),
                 _ => {}
             }
         }
     }
 
     impl super::Buyable for DevelopmentCard  {
+        #[inline]
         fn get_cost() -> super::ResourceDeck {
             enum_map! {
                 super::Resource::Grain => 1,
@@ -123,55 +123,50 @@ mod development_card {
 }
 
 #[derive(Debug)]
+pub struct Coord {
+    x: i32,
+    y: i32
+}
+
+mod road {
+    type CoordTown =  (super::Coord, super::Coord);
+
+    #[derive(Debug)]
+    pub struct Road {
+        location: CoordTown
+    }
+
+    impl Road {
+        pub fn create_road(north_coord: super::Coord, south_coord: super::Coord) -> Road {
+            Road {
+                location: (north_coord, south_coord)
+            }
+        }
+
+        pub fn is_connected(&self, road: &Road) -> bool {
+            true
+        }
+    }
+    
+    impl super::Buyable for Road  {
+        #[inline]
+        fn get_cost() -> super::ResourceDeck {
+            enum_map! {
+                super::Resource::Lumber => 1,
+                super::Resource::Brick => 1,
+                _ => 0,
+            }
+        }
+    }
+    
+}
+
+
+#[derive(Debug)]
 struct Deck {
     resource_cards: ResourceDeck,
     research_cards:  Vec<development_card::DevelopmentCard>
 }
-
-
-// fn get_cost(buyable: TypeBuyable) -> ResourceDeck {
-//     match buyable {
-//         TypeBuyable::DevelopmentCard => enum_map! {
-//             Resource::Grain => 1,
-//             Resource::Ore => 1,
-//             Resource::Wool => 1,
-//             _ => 0,
-//         },
-//         TypeBuyable::Settlement =>  enum_map! {
-//             Resource::Grain => 1,
-//             Resource::Ore => 1,
-//             Resource::Wool => 1,
-//             Resource::Lumber => 1,
-//             _ => 0,
-//         },
-//         TypeBuyable::City => enum_map! {
-//             Resource::Grain => 2,
-//             Resource::Ore => 3,
-//             _ => 0,
-//         },
-//         TypeBuyable::Road => enum_map! {
-//             Resource::Lumber =>1,
-//             Resource::Brick => 1,
-//             _ => 0,
-//         }
-//     }
-// }
-
-
-
-
-
-// #[derive(Debug)]
-// struct Coord {
-//     x: i32,
-//     y: i32
-// }
-
-// #[derive(Debug)]
-// enum Coords {
-//     CoordTown(Coord),
-//     CoordRoad(Coord, Coord)
-// }
 
 
 fn roll_dices(value: i32) -> (i32, i32) {
@@ -204,7 +199,8 @@ fn main() {
     println!("{:?}", deck);
     //println!("City price: {:?}", get_cost(TypeBuyable::City));
     println!("Dev card: {:?}", development_card::DevelopmentCard::get_cost());
-    
-    
+    deck.research_cards[0].effect();
+    let r = road::Road::create_road(Coord{x:1,y:1}, Coord{x:2,y:2});
+    println!("{:?}", r);
 }
 
