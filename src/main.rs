@@ -33,6 +33,10 @@ trait Buyable {
     fn get_cost() -> EnumMap<Resource, i32>;
 }
 
+trait Town {
+    fn point() -> i32;
+}
+
 mod development_card {
     type DevelopmentDeck =  super::EnumMap<DevelopmentCardValue, i32>;
 
@@ -144,17 +148,19 @@ impl Coord {
 
 
 mod road {
-    type CoordTown =  (super::Coord, super::Coord);
+    type CoordRoad =  (super::Coord, super::Coord);
 
     #[derive(Debug)]
     pub struct Road {
-        location: CoordTown
+        location: CoordRoad,
+        connected: Vec<Road>
     }
 
     impl Road {
         pub fn create_road(north_coord: super::Coord, south_coord: super::Coord) -> Road {
             Road {
-                location: (north_coord, south_coord)
+                location: (north_coord, south_coord),
+                connected: vec!()
             }
         }
 
@@ -179,6 +185,86 @@ mod road {
     
 }
 
+mod settlement {
+    #[derive(Debug)]
+    pub struct Settlement {
+        location: super::Coord,
+        player: i32, // player to be implemented
+        harbor: Option<bool> // harbor type to be implemented
+    }
+
+    impl Settlement {
+        pub fn create_settlement() {
+            
+        }
+        
+        pub fn get_player() {
+            
+        }
+
+        pub fn evolve_town() {
+            
+        }
+    }
+    
+    impl super::Town for Settlement {
+        #[inline]
+        fn point() -> i32 {
+            1
+        }
+    }
+
+    impl super::Buyable for Settlement  {
+        #[inline]
+        fn get_cost() -> super::ResourceDeck {
+            enum_map! {
+                super::Resource::Lumber => 1,
+                super::Resource::Brick => 1,
+                super::Resource::Wool => 1,
+                super::Resource::Grain => 1,
+                _ => 0,
+            }
+        }
+    }
+}
+
+mod city {
+    #[derive(Debug)]
+    pub struct City {
+        location: super::Coord,
+        player: i32, // player to be implemented
+        harbor: Option<bool> // harbor type to be implemented
+    }
+
+    impl City {
+        pub fn create_city() {
+            
+        }
+        
+        pub fn get_player() {
+            
+        }
+    }
+    
+    impl super::Town for City {
+        #[inline]
+        fn point() -> i32 {
+            2
+        }
+    }
+
+    impl super::Buyable for City  {
+        #[inline]
+        fn get_cost() -> super::ResourceDeck {
+            enum_map! {
+                super::Resource::Ore => 3,
+                super::Resource::Grain => 2,
+                _ => 0,
+            }
+        }
+    }
+}
+
 
 #[derive(Debug)]
 struct Deck {
@@ -195,6 +281,9 @@ fn roll_dices(value: i32) -> (i32, i32) {
 fn roll_6_dices() -> (i32, i32){
     roll_dices(6)
 }
+
+
+
 
 fn main() {
     println!("Please, enter your name: ");
@@ -215,7 +304,7 @@ fn main() {
         research_cards: development_card::DevelopmentCard::create_deck()
     };
     println!("{:?}", deck);
-    //println!("City price: {:?}", get_cost(TypeBuyable::City));
+    //println!("Town price: {:?}", get_cost(TypeBuyable::Town));
     println!("Dev card: {:?}", development_card::DevelopmentCard::get_cost());
     deck.research_cards[0].effect();
     let r = road::Road::create_road(Coord{x:1,y:1}, Coord{x:2,y:2});
