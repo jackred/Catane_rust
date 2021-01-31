@@ -128,6 +128,21 @@ pub struct Coord {
     y: i32
 }
 
+impl Coord {
+    pub fn is_connected(&self, coord: &Coord) -> bool {
+        match (self.y<6, self.y%2) {
+            (_,_) if coord.x == self.x && coord.y == self.y+1 => true,
+            (_,_) if coord.x == self.x && coord.y == self.y-1 => true,
+            (true, 0) if coord.x == self.x+1 && coord.y == self.y+1 => true,
+            (true, 1) if coord.x == self.x-1 && coord.y == self.y-1 => true,
+            (false, 0) if coord.x == self.x-1 && coord.y == self.y+1 => true,
+            (false, 1) if coord.x == self.x+1 && coord.y == self.y-1 => true,
+            _ => false
+        }
+    }
+}
+
+
 mod road {
     type CoordTown =  (super::Coord, super::Coord);
 
@@ -144,7 +159,10 @@ mod road {
         }
 
         pub fn is_connected(&self, road: &Road) -> bool {
-            true
+            self.location.0.is_connected(&road.location.0)
+                ||  self.location.0.is_connected(&road.location.1)
+                ||  self.location.1.is_connected(&road.location.0)
+                ||  self.location.1.is_connected(&road.location.1)
         }
     }
     
@@ -202,5 +220,9 @@ fn main() {
     deck.research_cards[0].effect();
     let r = road::Road::create_road(Coord{x:1,y:1}, Coord{x:2,y:2});
     println!("{:?}", r);
+    let r2 = road::Road::create_road(Coord{x:1,y:0}, Coord{x:8,y:-8});
+    println!("{:?}", r2);
+    println!("{:?}", r.is_connected(&r2));
+    println!("{:?}", r2.is_connected(&r));
 }
 
