@@ -34,7 +34,8 @@ trait Buyable {
 }
 
 trait Town {
-    fn point() -> i32;
+    fn point(&self) -> i32;
+    fn resource_multiplier(&self) -> i32;
 }
 
 mod development_card {
@@ -194,22 +195,31 @@ mod settlement {
     }
 
     impl Settlement {
-        pub fn create_settlement() {
-            
+        pub fn create_settlement(location: super::Coord, player: i32, harbor: Option<bool>) -> Settlement {
+            Settlement {
+                location: location,
+                player: player,
+                harbor: harbor
+            }
         }
         
-        pub fn get_player() {
-            
+        pub fn get_player(&self) -> i32 {
+            self.player
         }
 
-        pub fn evolve_town() {
-            
+        pub fn evolve_town(self) -> super::city::City {
+            super::city::City::create_city(self.location, self.player, self.harbor)
         }
     }
     
     impl super::Town for Settlement {
         #[inline]
-        fn point() -> i32 {
+        fn point(&self) -> i32 {
+            1
+        }
+
+        #[inline]
+        fn resource_multiplier(&self) -> i32 {
             1
         }
     }
@@ -237,18 +247,26 @@ mod city {
     }
 
     impl City {
-        pub fn create_city() {
-            
+        pub fn create_city(location: super::Coord, player: i32, harbor: Option<bool>) -> City{
+            City {
+                location: location,
+                player: player,
+                harbor: harbor
+            }
         }
         
-        pub fn get_player() {
-            
+        pub fn get_player(&self) -> i32 {
+            self.player
         }
     }
     
     impl super::Town for City {
         #[inline]
-        fn point() -> i32 {
+        fn point(&self) -> i32 {
+            2
+        }
+        #[inline]
+        fn resource_multiplier(&self) -> i32 {
             2
         }
     }
@@ -313,5 +331,9 @@ fn main() {
     println!("{:?}", r2);
     println!("{:?}", r.is_connected(&r2));
     println!("{:?}", r2.is_connected(&r));
+    let s = settlement::Settlement::create_settlement(Coord{x: 5, y: 7}, 2, None);
+    println!("{:?}, {}", s, s.point());
+    let c = s.evolve_town();
+    println!("{:?}, {}", c, c.point());
 }
 
