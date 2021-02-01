@@ -71,7 +71,7 @@ mod development_card {
     pub struct DevelopmentCard {
         value: DevelopmentCardValue,
         playable: bool,
-        owned: Option<i32>
+        player: Option<i32>
     }
 
     impl DevelopmentCard {
@@ -84,11 +84,11 @@ mod development_card {
             }
         }
 
-        fn create_card(value: DevelopmentCardValue, playable:bool) -> DevelopmentCard {
+        fn new(value: DevelopmentCardValue, playable:bool) -> DevelopmentCard {
             DevelopmentCard {
                 playable: playable,
                 value: value,
-                owned: None
+                player: None
             }
         }
         
@@ -97,7 +97,7 @@ mod development_card {
             let mut res: Vec<DevelopmentCard> = vec![];
             for (key, &value) in &deck {
                 for _ in 0..value {
-                    res.push(DevelopmentCard::create_card(key.clone(), value>1));
+                    res.push(DevelopmentCard::new(key.clone(), value>1));
                 }
             }
             res
@@ -158,7 +158,7 @@ mod road {
     }
 
     impl Road {
-        pub fn create_road(north_coord: super::Coord, south_coord: super::Coord) -> Road {
+        pub fn new(north_coord: super::Coord, south_coord: super::Coord) -> Road {
             Road {
                 location: (north_coord, south_coord),
                 connected: vec!()
@@ -195,7 +195,7 @@ mod settlement {
     }
 
     impl Settlement {
-        pub fn create_settlement(location: super::Coord, player: i32, harbor: Option<bool>) -> Settlement {
+        pub fn new(location: super::Coord, player: i32, harbor: Option<bool>) -> Settlement {
             Settlement {
                 location: location,
                 player: player,
@@ -208,7 +208,7 @@ mod settlement {
         }
 
         pub fn evolve_town(self) -> super::city::City {
-            super::city::City::create_city(self.location, self.player, self.harbor)
+            super::city::City::new(self.location, self.player, self.harbor)
         }
     }
     
@@ -247,7 +247,7 @@ mod city {
     }
 
     impl City {
-        pub fn create_city(location: super::Coord, player: i32, harbor: Option<bool>) -> City{
+        pub fn new(location: super::Coord, player: i32, harbor: Option<bool>) -> City{
             City {
                 location: location,
                 player: player,
@@ -325,13 +325,13 @@ fn main() {
     //println!("Town price: {:?}", get_cost(TypeBuyable::Town));
     println!("Dev card: {:?}", development_card::DevelopmentCard::get_cost());
     deck.research_cards[0].effect();
-    let r = road::Road::create_road(Coord{x:1,y:1}, Coord{x:2,y:2});
+    let r = road::Road::new(Coord{x:1,y:1}, Coord{x:2,y:2});
     println!("{:?}", r);
-    let r2 = road::Road::create_road(Coord{x:1,y:0}, Coord{x:8,y:-8});
+    let r2 = road::Road::new(Coord{x:1,y:0}, Coord{x:8,y:-8});
     println!("{:?}", r2);
     println!("{:?}", r.is_connected(&r2));
     println!("{:?}", r2.is_connected(&r));
-    let s = settlement::Settlement::create_settlement(Coord{x: 5, y: 7}, 2, None);
+    let s = settlement::Settlement::new(Coord{x: 5, y: 7}, 2, None);
     println!("{:?}, {}", s, s.point());
     let c = s.evolve_town();
     println!("{:?}, {}", c, c.point());
