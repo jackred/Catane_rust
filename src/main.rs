@@ -1,6 +1,7 @@
 use std::io;
 use rand::Rng;
 // use std::collections::HashMap;
+use core::fmt::Debug;
 
 #[macro_use]
 extern crate enum_map;
@@ -37,6 +38,13 @@ trait Town {
     fn point(&self) -> i32;
     fn resource_multiplier(&self) -> i32;
 }
+
+impl Debug for dyn Town {
+    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
+        write!(f, "Town{{{}}}", self.point())
+    }
+}
+
 
 mod development_card {
     type DevelopmentDeck =  super::EnumMap<DevelopmentCardValue, i32>;
@@ -282,6 +290,37 @@ mod city {
         }
     }
 }
+
+mod map {
+    #[derive(Debug)]
+    pub struct Map {
+        thief: i32,
+        tiles: Vec<super::tile::Tile>, // meant to be 2d array
+        towns: Vec<Box<dyn super::Town>>, // meant to be 2d array
+        roads: Vec<super::road::Road>, // meant to be 2d array
+    }
+
+
+    impl Map {
+        fn move_thief(&mut self, new_position: i32) -> bool {
+            let res = self.thief != new_position;
+            if self.thief != new_position {
+                self.thief = new_position;
+            }
+            res
+        }
+    }
+}
+
+mod tile {
+    #[derive(Debug)]
+    pub struct Tile {
+        resource: super::Resource,
+        towns: Vec<Box<dyn super::Town>>,
+        coord: super::Coord
+    }
+}
+
 
 
 #[derive(Debug)]
