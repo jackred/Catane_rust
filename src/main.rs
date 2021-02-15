@@ -31,7 +31,7 @@ type ResourceDeck = EnumMap<Resource, i32>;
 
 
 trait Buyable {
-    fn get_cost() -> EnumMap<Resource, i32>;
+    fn get_cost(&self) -> EnumMap<Resource, i32>;
 }
 
 trait Town {
@@ -124,7 +124,7 @@ mod development_card {
 
     impl super::Buyable for DevelopmentCard  {
         #[inline]
-        fn get_cost() -> super::ResourceDeck {
+        fn get_cost(&self) -> super::ResourceDeck {
             enum_map! {
                 super::Resource::Grain => 1,
                 super::Resource::Ore => 1,
@@ -183,7 +183,7 @@ mod road {
     
     impl super::Buyable for Road  {
         #[inline]
-        fn get_cost() -> super::ResourceDeck {
+        fn get_cost(&self) -> super::ResourceDeck {
             enum_map! {
                 super::Resource::Lumber => 1,
                 super::Resource::Brick => 1,
@@ -234,7 +234,7 @@ mod settlement {
 
     impl super::Buyable for Settlement  {
         #[inline]
-        fn get_cost() -> super::ResourceDeck {
+        fn get_cost(&self) -> super::ResourceDeck {
             enum_map! {
                 super::Resource::Lumber => 1,
                 super::Resource::Brick => 1,
@@ -281,7 +281,7 @@ mod city {
 
     impl super::Buyable for City  {
         #[inline]
-        fn get_cost() -> super::ResourceDeck {
+        fn get_cost(&self) -> super::ResourceDeck {
             enum_map! {
                 super::Resource::Ore => 3,
                 super::Resource::Grain => 2,
@@ -323,6 +323,29 @@ mod tile {
 
 
 
+mod player {
+    #[derive(Debug)]
+    pub struct Player {
+        name: String,
+        card: super::Deck,
+        buildings: Vec<i32>
+    }
+
+    impl Player {
+        fn add_resources(&self, resources: super::ResourceDeck){}
+        fn rm_resources(&self, resources: super::ResourceDeck){}
+        fn gain_resources(&self, tiles: Vec<super::tile::Tile>){}
+        fn buy(&self, buyable: Box<dyn super::Buyable>){} // maybe redo struct
+        fn can_buy(&self, cost: super::ResourceDeck){}
+        fn play_card(&self, card: super::development_card::DevelopmentCard){} // useless?
+        fn trade(&self, gain:  super::ResourceDeck, traded:  super::ResourceDeck){}
+        fn calculate_points(&self) -> i32{
+            1
+        }
+    }
+}
+
+
 #[derive(Debug)]
 struct Deck {
     resource_cards: ResourceDeck,
@@ -362,7 +385,6 @@ fn main() {
     };
     println!("{:?}", deck);
     //println!("Town price: {:?}", get_cost(TypeBuyable::Town));
-    println!("Dev card: {:?}", development_card::DevelopmentCard::get_cost());
     deck.research_cards[0].effect();
     let r = road::Road::new(Coord{x:1,y:1}, Coord{x:2,y:2});
     println!("{:?}", r);
