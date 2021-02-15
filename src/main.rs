@@ -1,3 +1,4 @@
+#![allow(dead_code)]
 use std::io;
 use rand::Rng;
 // use std::collections::HashMap;
@@ -7,15 +8,8 @@ use core::fmt::Debug;
 extern crate enum_map;
 use enum_map::EnumMap;
 
-#[derive(Debug, Enum)]
-enum Resource {
-    Grain,
-    Lumber,
-    Ore,
-    Wool,
-    Brick,
-}
 
+mod resource;
 
 
 #[derive(Debug)]
@@ -26,12 +20,10 @@ enum TypeBuyable {
     Road
 }
 
-type ResourceDeck = EnumMap<Resource, i32>;
 
 
-
-trait Buyable {
-    fn get_cost(&self) -> EnumMap<Resource, i32>;
+pub trait Buyable {
+    fn get_cost(&self) -> EnumMap<resource::Resource, i32>;
 }
 
 trait Town {
@@ -124,11 +116,11 @@ mod development_card {
 
     impl super::Buyable for DevelopmentCard  {
         #[inline]
-        fn get_cost(&self) -> super::ResourceDeck {
+        fn get_cost(&self) -> super::resource::ResourceDeck {
             enum_map! {
-                super::Resource::Grain => 1,
-                super::Resource::Ore => 1,
-                super::Resource::Wool => 1,
+                super::resource::Resource::Grain => 1,
+                super::resource::Resource::Ore => 1,
+                super::resource::Resource::Wool => 1,
                 _ => 0,
             }
         }
@@ -183,10 +175,10 @@ mod road {
     
     impl super::Buyable for Road  {
         #[inline]
-        fn get_cost(&self) -> super::ResourceDeck {
+        fn get_cost(&self) -> super::resource::ResourceDeck {
             enum_map! {
-                super::Resource::Lumber => 1,
-                super::Resource::Brick => 1,
+                super::resource::Resource::Lumber => 1,
+                super::resource::Resource::Brick => 1,
                 _ => 0,
             }
         }
@@ -234,12 +226,12 @@ mod settlement {
 
     impl super::Buyable for Settlement  {
         #[inline]
-        fn get_cost(&self) -> super::ResourceDeck {
+        fn get_cost(&self) -> super::resource::ResourceDeck {
             enum_map! {
-                super::Resource::Lumber => 1,
-                super::Resource::Brick => 1,
-                super::Resource::Wool => 1,
-                super::Resource::Grain => 1,
+                super::resource::Resource::Lumber => 1,
+                super::resource::Resource::Brick => 1,
+                super::resource::Resource::Wool => 1,
+                super::resource::Resource::Grain => 1,
                 _ => 0,
             }
         }
@@ -281,10 +273,10 @@ mod city {
 
     impl super::Buyable for City  {
         #[inline]
-        fn get_cost(&self) -> super::ResourceDeck {
+        fn get_cost(&self) -> super::resource::ResourceDeck {
             enum_map! {
-                super::Resource::Ore => 3,
-                super::Resource::Grain => 2,
+                super::resource::Resource::Ore => 3,
+                super::resource::Resource::Grain => 2,
                 _ => 0,
             }
         }
@@ -315,7 +307,7 @@ mod map {
 mod tile {
     #[derive(Debug)]
     pub struct Tile {
-        resource: super::Resource,
+        resource: super::resource::Resource,
         towns: Vec<Box<dyn super::Town>>,
         coord: super::Coord
     }
@@ -332,14 +324,14 @@ mod player {
     }
 
     impl Player {
-        fn add_resources(&self, resources: super::ResourceDeck){}
-        fn rm_resources(&self, resources: super::ResourceDeck){}
-        fn gain_resources(&self, tiles: Vec<super::tile::Tile>){}
-        fn buy(&self, buyable: Box<dyn super::Buyable>){} // maybe redo struct
-        fn can_buy(&self, cost: super::ResourceDeck){}
-        fn play_card(&self, card: super::development_card::DevelopmentCard){} // useless?
-        fn trade(&self, gain:  super::ResourceDeck, traded:  super::ResourceDeck){}
-        fn calculate_points(&self) -> i32{
+        pub fn add_resources(&self, resources: super::resource::ResourceDeck){}
+        pub fn rm_resources(&self, resources: super::resource::ResourceDeck){}
+        pub fn gain_resources(&self, tiles: Vec<super::tile::Tile>){}
+        pub fn buy(&self, buyable: Box<dyn super::Buyable>){} // maybe redo struct
+        pub fn can_buy(&self, cost: super::resource::ResourceDeck){}
+        pub fn play_card(&self, card: super::development_card::DevelopmentCard){} // useless?
+        pub fn trade(&self, gain:  super::resource::ResourceDeck, traded:  super::resource::ResourceDeck){}
+        pub fn calculate_points(&self) -> i32{
             1
         }
     }
@@ -348,7 +340,7 @@ mod player {
 
 #[derive(Debug)]
 struct Deck {
-    resource_cards: ResourceDeck,
+    resource_cards: resource::ResourceDeck,
     research_cards:  Vec<development_card::DevelopmentCard>
 }
 
@@ -375,10 +367,10 @@ fn main() {
     let (d1, d2) = roll_6_dices();
     println!("Dice 1: {}, Dice 2: {}", d1, d2);
     let map = enum_map! {
-        Resource::Grain => 32,
+        resource::Resource::Grain => 32,
         _ => 0,
     };
-    println!("{:?}", map[Resource::Ore]);
+    println!("{:?}", map[resource::Resource::Ore]);
     let deck = Deck {
         resource_cards: map,
         research_cards: development_card::DevelopmentCard::create_deck()
