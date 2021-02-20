@@ -6,10 +6,11 @@ use core::fmt::Debug;
 
 #[macro_use]
 extern crate enum_map;
-use enum_map::EnumMap;
 
 
 mod resource;
+mod buyable;
+use buyable::town::Town;
 
 
 #[derive(Debug)]
@@ -20,112 +21,6 @@ enum TypeBuyable {
     Road
 }
 
-
-
-pub trait Buyable {
-    fn get_cost(&self) -> EnumMap<resource::Resource, i32>;
-}
-
-trait Town {
-    fn point(&self) -> i32;
-    fn resource_multiplier(&self) -> i32;
-}
-
-impl Debug for dyn Town {
-    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
-        write!(f, "Town{{{}}}", self.point())
-    }
-}
-
-
-mod development_card {
-    type DevelopmentDeck =  super::EnumMap<DevelopmentCardValue, i32>;
-
-    #[derive(Debug, Enum, Clone)]
-    pub enum DevelopmentCardValue {
-        Knight,
-        RoadBuilding,
-        YearOfPlenty,
-        Monopoly,
-        University,
-        Market,
-        GreatHall,
-        Chapel,
-        Library,
-    }
-    
-    fn knight_action() {
-        println!("knight");
-    }
-    fn road_building_action() {
-        println!("road building");
-    }
-    fn year_of_plenty_action() {
-        println!("year of plenty");
-    }
-    fn monopoly_action() {
-        println!("monopoly");
-    }
-
-    #[derive(Debug)]
-    pub struct DevelopmentCard {
-        value: DevelopmentCardValue,
-        playable: bool,
-        player: Option<i32>
-    }
-
-    impl DevelopmentCard {
-        #[inline]
-        fn get_deck() -> DevelopmentDeck {
-            enum_map! {
-                DevelopmentCardValue::Knight => 14,
-                DevelopmentCardValue::RoadBuilding | DevelopmentCardValue::YearOfPlenty | DevelopmentCardValue::Monopoly => 2,
-                _ => 1,
-            }
-        }
-
-        fn new(value: DevelopmentCardValue, playable:bool) -> DevelopmentCard {
-            DevelopmentCard {
-                playable: playable,
-                value: value,
-                player: None
-            }
-        }
-        
-        pub fn create_deck() -> Vec<DevelopmentCard> {
-            let deck = DevelopmentCard::get_deck();
-            let mut res: Vec<DevelopmentCard> = vec![];
-            for (key, &value) in &deck {
-                for _ in 0..value {
-                    res.push(DevelopmentCard::new(key.clone(), value>1));
-                }
-            }
-            res
-        }
-        
-        pub fn effect(&self) {
-            match self.value {
-                DevelopmentCardValue::Knight => knight_action(),
-                DevelopmentCardValue::RoadBuilding => road_building_action(),
-                DevelopmentCardValue::YearOfPlenty => year_of_plenty_action(),
-                DevelopmentCardValue::Monopoly => monopoly_action(),
-                _ => {}
-            }
-        }
-    }
-
-    impl super::Buyable for DevelopmentCard  {
-        #[inline]
-        fn get_cost(&self) -> super::resource::ResourceDeck {
-            enum_map! {
-                super::resource::Resource::Grain => 1,
-                super::resource::Resource::Ore => 1,
-                super::resource::Resource::Wool => 1,
-                _ => 0,
-            }
-        }
-    }
-}
 
 #[derive(Debug)]
 pub struct Coord {
@@ -148,148 +43,14 @@ impl Coord {
 }
 
 
-mod road {
-    type CoordRoad =  (super::Coord, super::Coord);
-
-    #[derive(Debug)]
-    pub struct Road {
-        location: CoordRoad,
-        connected: Vec<Road>
-    }
-
-    impl Road {
-        pub fn new(north_coord: super::Coord, south_coord: super::Coord) -> Road {
-            Road {
-                location: (north_coord, south_coord),
-                connected: vec!()
-            }
-        }
-
-        pub fn is_connected(&self, road: &Road) -> bool {
-            self.location.0.is_connected(&road.location.0)
-                ||  self.location.0.is_connected(&road.location.1)
-                ||  self.location.1.is_connected(&road.location.0)
-                ||  self.location.1.is_connected(&road.location.1)
-        }
-    }
-    
-    impl super::Buyable for Road  {
-        #[inline]
-        fn get_cost(&self) -> super::resource::ResourceDeck {
-            enum_map! {
-                super::resource::Resource::Lumber => 1,
-                super::resource::Resource::Brick => 1,
-                _ => 0,
-            }
-        }
-    }
-    
-}
-
-mod settlement {
-    #[derive(Debug)]
-    pub struct Settlement {
-        location: super::Coord,
-        player: i32, // player to be implemented
-        harbor: Option<bool> // harbor type to be implemented
-    }
-
-    impl Settlement {
-        pub fn new(location: super::Coord, player: i32, harbor: Option<bool>) -> Settlement {
-            Settlement {
-                location: location,
-                player: player,
-                harbor: harbor
-            }
-        }
-        
-        pub fn get_player(&self) -> i32 {
-            self.player
-        }
-
-        pub fn evolve_town(self) -> super::city::City {
-            super::city::City::new(self.location, self.player, self.harbor)
-        }
-    }
-    
-    impl super::Town for Settlement {
-        #[inline]
-        fn point(&self) -> i32 {
-            1
-        }
-
-        #[inline]
-        fn resource_multiplier(&self) -> i32 {
-            1
-        }
-    }
-
-    impl super::Buyable for Settlement  {
-        #[inline]
-        fn get_cost(&self) -> super::resource::ResourceDeck {
-            enum_map! {
-                super::resource::Resource::Lumber => 1,
-                super::resource::Resource::Brick => 1,
-                super::resource::Resource::Wool => 1,
-                super::resource::Resource::Grain => 1,
-                _ => 0,
-            }
-        }
-    }
-}
-
-mod city {
-    #[derive(Debug)]
-    pub struct City {
-        location: super::Coord,
-        player: i32, // player to be implemented
-        harbor: Option<bool> // harbor type to be implemented
-    }
-
-    impl City {
-        pub fn new(location: super::Coord, player: i32, harbor: Option<bool>) -> City{
-            City {
-                location: location,
-                player: player,
-                harbor: harbor
-            }
-        }
-        
-        pub fn get_player(&self) -> i32 {
-            self.player
-        }
-    }
-    
-    impl super::Town for City {
-        #[inline]
-        fn point(&self) -> i32 {
-            2
-        }
-        #[inline]
-        fn resource_multiplier(&self) -> i32 {
-            2
-        }
-    }
-
-    impl super::Buyable for City  {
-        #[inline]
-        fn get_cost(&self) -> super::resource::ResourceDeck {
-            enum_map! {
-                super::resource::Resource::Ore => 3,
-                super::resource::Resource::Grain => 2,
-                _ => 0,
-            }
-        }
-    }
-}
 
 mod map {
     #[derive(Debug)]
     pub struct Map {
         thief: i32,
         tiles: Vec<super::tile::Tile>, // meant to be 2d array
-        towns: Vec<Box<dyn super::Town>>, // meant to be 2d array
-        roads: Vec<super::road::Road>, // meant to be 2d array
+        towns: Vec<Box<dyn super::buyable::town::Town>>, // meant to be 2d array
+        roads: Vec<super::buyable::road::Road>, // meant to be 2d array
     }
 
 
@@ -308,7 +69,7 @@ mod tile {
     #[derive(Debug)]
     pub struct Tile {
         resource: super::resource::Resource,
-        towns: Vec<Box<dyn super::Town>>,
+        towns: Vec<Box<dyn super::buyable::town::Town>>,
         coord: super::Coord
     }
 }
@@ -327,9 +88,9 @@ mod player {
         pub fn add_resources(&self, resources: super::resource::ResourceDeck){}
         pub fn rm_resources(&self, resources: super::resource::ResourceDeck){}
         pub fn gain_resources(&self, tiles: Vec<super::tile::Tile>){}
-        pub fn buy(&self, buyable: Box<dyn super::Buyable>){} // maybe redo struct
+        pub fn buy(&self, buyable: Box<dyn super::buyable::Buyable>){} // maybe redo struct
         pub fn can_buy(&self, cost: super::resource::ResourceDeck){}
-        pub fn play_card(&self, card: super::development_card::DevelopmentCard){} // useless?
+        pub fn play_card(&self, card: super::buyable::development_card::DevelopmentCard){} // useless?
         pub fn trade(&self, gain:  super::resource::ResourceDeck, traded:  super::resource::ResourceDeck){}
         pub fn calculate_points(&self) -> i32{
             1
@@ -341,7 +102,7 @@ mod player {
 #[derive(Debug)]
 struct Deck {
     resource_cards: resource::ResourceDeck,
-    research_cards:  Vec<development_card::DevelopmentCard>
+    research_cards:  Vec<buyable::development_card::DevelopmentCard>
 }
 
 
@@ -373,18 +134,18 @@ fn main() {
     println!("{:?}", map[resource::Resource::Ore]);
     let deck = Deck {
         resource_cards: map,
-        research_cards: development_card::DevelopmentCard::create_deck()
+        research_cards: buyable::development_card::DevelopmentCard::create_deck()
     };
     println!("{:?}", deck);
     //println!("Town price: {:?}", get_cost(TypeBuyable::Town));
     deck.research_cards[0].effect();
-    let r = road::Road::new(Coord{x:1,y:1}, Coord{x:2,y:2});
+    let r = buyable::road::Road::new(Coord{x:1,y:1}, Coord{x:2,y:2});
     println!("{:?}", r);
-    let r2 = road::Road::new(Coord{x:1,y:0}, Coord{x:8,y:-8});
+    let r2 = buyable::road::Road::new(Coord{x:1,y:0}, Coord{x:8,y:-8});
     println!("{:?}", r2);
     println!("{:?}", r.is_connected(&r2));
     println!("{:?}", r2.is_connected(&r));
-    let s = settlement::Settlement::new(Coord{x: 5, y: 7}, 2, None);
+    let s = buyable::town::settlement::Settlement::new(Coord{x: 5, y: 7}, 2, None);
     println!("{:?}, {}", s, s.point());
     let c = s.evolve_town();
     println!("{:?}, {}", c, c.point());
