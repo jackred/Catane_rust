@@ -1,3 +1,6 @@
+use crate::resource::{Resource, ResourceDeck};
+use crate::buyable::Buyable;
+
 type DevelopmentDeck =  super::EnumMap<DevelopmentCardValue, i32>;
 
 #[derive(Debug, Enum, Clone)]
@@ -73,13 +76,13 @@ impl DevelopmentCard {
     }
 }
 
-impl super::Buyable for DevelopmentCard  {
+impl Buyable for DevelopmentCard  {
     #[inline]
-    fn get_cost(&self) -> crate::resource::ResourceDeck {
+    fn get_cost(&self) -> ResourceDeck {
         enum_map! {
-            crate::resource::Resource::Grain => 1,
-            crate::resource::Resource::Ore => 1,
-            crate::resource::Resource::Wool => 1,
+            Resource::Grain => 1,
+            Resource::Ore => 1,
+            Resource::Wool => 1,
             _ => 0,
         }
     }

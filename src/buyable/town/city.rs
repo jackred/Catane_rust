@@ -1,3 +1,5 @@
+use crate::resource::{Resource, ResourceDeck};
+use crate::buyable::Buyable;
 
 #[derive(Debug)]
 pub struct City {
@@ -31,12 +33,12 @@ impl super::Town for City {
     }
 }
 
-impl super::super::Buyable for City  {
+impl Buyable for City  {
     #[inline]
-    fn get_cost(&self) -> crate::resource::ResourceDeck {
+    fn get_cost(&self) ->ResourceDeck {
         enum_map! {
-            crate::resource::Resource::Ore => 3,
-            crate::resource::Resource::Grain => 2,
+            Resource::Ore => 3,
+            Resource::Grain => 2,
             _ => 0,
         }
     }

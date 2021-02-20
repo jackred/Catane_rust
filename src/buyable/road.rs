@@ -1,3 +1,6 @@
+use crate::resource::{Resource, ResourceDeck};
+use crate::buyable::Buyable;
+
 type CoordRoad =  (crate::Coord, crate::Coord);
 
 #[derive(Debug)]
@@ -22,12 +25,12 @@ impl Road {
     }
 }
 
-impl super::Buyable for Road  {
+impl Buyable for Road  {
     #[inline]
-    fn get_cost(&self) -> crate::resource::ResourceDeck {
+    fn get_cost(&self) -> ResourceDeck {
         enum_map! {
-            crate::resource::Resource::Lumber => 1,
-            crate::resource::Resource::Brick => 1,
+            Resource::Lumber => 1,
+            Resource::Brick => 1,
             _ => 0,
         }
     }

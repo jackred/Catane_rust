@@ -1,6 +1,5 @@
 #![allow(dead_code)]
 use std::io;
-use rand::Rng;
 // use std::collections::HashMap;
 use core::fmt::Debug;
 
@@ -10,6 +9,9 @@ extern crate enum_map;
 
 mod resource;
 mod buyable;
+mod utility;
+
+use utility::{Coord, Deck, roll_6_dices};
 use buyable::town::Town;
 
 
@@ -20,29 +22,6 @@ enum TypeBuyable {
     City,
     Road
 }
-
-
-#[derive(Debug)]
-pub struct Coord {
-    x: i32,
-    y: i32
-}
-
-impl Coord {
-    pub fn is_connected(&self, coord: &Coord) -> bool {
-        match (self.y<6, self.y%2) {
-            (_,_) if coord.x == self.x && coord.y == self.y+1 => true,
-            (_,_) if coord.x == self.x && coord.y == self.y-1 => true,
-            (true, 0) if coord.x == self.x+1 && coord.y == self.y+1 => true,
-            (true, 1) if coord.x == self.x-1 && coord.y == self.y-1 => true,
-            (false, 0) if coord.x == self.x-1 && coord.y == self.y+1 => true,
-            (false, 1) if coord.x == self.x+1 && coord.y == self.y-1 => true,
-            _ => false
-        }
-    }
-}
-
-
 
 mod map {
     #[derive(Debug)]
@@ -97,25 +76,6 @@ mod player {
         }
     }
 }
-
-
-#[derive(Debug)]
-struct Deck {
-    resource_cards: resource::ResourceDeck,
-    research_cards:  Vec<buyable::development_card::DevelopmentCard>
-}
-
-
-fn roll_dices(value: i32) -> (i32, i32) {
-    (rand::thread_rng().gen_range(1, value),
-     rand::thread_rng().gen_range(1, value))
-}
-
-fn roll_6_dices() -> (i32, i32){
-    roll_dices(6)
-}
-
-
 
 
 fn main() {

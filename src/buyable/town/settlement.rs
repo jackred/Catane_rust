@@ -1,3 +1,6 @@
+use crate::resource::{Resource, ResourceDeck};
+use crate::buyable::Buyable;
+
 #[derive(Debug)]
 pub struct Settlement {
     location: crate::Coord,
@@ -35,14 +38,14 @@ impl super::Town for Settlement {
     }
 }
 
-impl super::super::Buyable for Settlement  {
+impl Buyable for Settlement  {
     #[inline]
-    fn get_cost(&self) -> crate::resource::ResourceDeck {
+    fn get_cost(&self) -> ResourceDeck {
         enum_map! {
-            crate::resource::Resource::Lumber => 1,
-            crate::resource::Resource::Brick => 1,
-            crate::resource::Resource::Wool => 1,
-            crate::resource::Resource::Grain => 1,
+            Resource::Lumber => 1,
+            Resource::Brick => 1,
+            Resource::Wool => 1,
+            Resource::Grain => 1,
             _ => 0,
         }
     }
