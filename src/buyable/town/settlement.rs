@@ -1,15 +1,17 @@
 use crate::resource::{Resource, ResourceDeck};
 use crate::buyable::Buyable;
+use crate::utility::{Coord};
+use super::city::City;
 
 #[derive(Debug)]
 pub struct Settlement {
-    location: crate::Coord,
+    location: Coord,
     player: i32, // player to be implemented
     harbor: Option<bool> // harbor type to be implemented
 }
 
 impl Settlement {
-    pub fn new(location: crate::Coord, player: i32, harbor: Option<bool>) -> Settlement {
+    pub fn new(location: Coord, player: i32, harbor: Option<bool>) -> Settlement {
         Settlement {
             location: location,
             player: player,
@@ -21,8 +23,8 @@ impl Settlement {
         self.player
     }
 
-    pub fn evolve_town(self) -> super::city::City {
-        super::city::City::new(self.location, self.player, self.harbor)
+    pub fn evolve_town(self) -> City {
+        City::new(self.location, self.player, self.harbor)
     }
 }
 

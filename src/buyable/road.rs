@@ -1,7 +1,8 @@
 use crate::resource::{Resource, ResourceDeck};
 use crate::buyable::Buyable;
+use crate::utility::{Coord};
 
-type CoordRoad =  (crate::Coord, crate::Coord);
+type CoordRoad =  (Coord, Coord);
 
 #[derive(Debug)]
 pub struct Road {
@@ -10,7 +11,7 @@ pub struct Road {
 }
 
 impl Road {
-    pub fn new(north_coord: crate::Coord, south_coord: crate::Coord) -> Road {
+    pub fn new(north_coord: Coord, south_coord: Coord) -> Road {
         Road {
             location: (north_coord, south_coord),
             connected: vec!()

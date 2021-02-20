@@ -1,15 +1,16 @@
 use crate::resource::{Resource, ResourceDeck};
 use crate::buyable::Buyable;
+use crate::utility::{Coord};
 
 #[derive(Debug)]
 pub struct City {
-    location: crate::Coord,
+    location: Coord,
     player: i32, // player to be implemented
     harbor: Option<bool> // harbor type to be implemented
 }
 
 impl City {
-    pub fn new(location: crate::Coord, player: i32, harbor: Option<bool>) -> City{
+    pub fn new(location: Coord, player: i32, harbor: Option<bool>) -> City{
         City {
             location: location,
             player: player,
