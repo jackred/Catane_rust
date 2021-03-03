@@ -78,7 +78,7 @@ impl DevelopmentCard {
 
 impl Buyable for DevelopmentCard  {
     #[inline]
-    fn get_cost(&self) -> ResourceDeck {
+    fn get_cost() -> ResourceDeck {
         enum_map! {
             Resource::Grain => 1,
             Resource::Ore => 1,

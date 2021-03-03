@@ -28,7 +28,7 @@ impl Road {
 
 impl Buyable for Road  {
     #[inline]
-    fn get_cost(&self) -> ResourceDeck {
+    fn get_cost() -> ResourceDeck {
         enum_map! {
             Resource::Lumber => 1,
             Resource::Brick => 1,
