@@ -79,11 +79,11 @@ impl DevelopmentCard {
 impl Buyable for DevelopmentCard  {
     #[inline]
     fn get_cost() -> ResourceDeck {
-        enum_map! {
+        ResourceDeck(enum_map! {
             Resource::Grain => 1,
             Resource::Ore => 1,
             Resource::Wool => 1,
             _ => 0,
-        }
+        })
     }
 }

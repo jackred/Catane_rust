@@ -13,7 +13,10 @@ mod player;
 mod map;
 
 use utility::{Coord, Deck, roll_6_dices};
+use buyable::Buyable;
 use buyable::town::Town;
+use buyable::town::city::City;
+
 
 fn main() {
     println!("Please, enter your name: ");
@@ -24,17 +27,17 @@ fn main() {
     println!("Rolling the dices...");
     let (d1, d2) = roll_6_dices();
     println!("Dice 1: {}, Dice 2: {}", d1, d2);
-    let map = enum_map! {
+    let mut map = resource::ResourceDeck(enum_map! {
         resource::Resource::Grain => 32,
         _ => 0,
-    };
-    println!("{:?}", map[resource::Resource::Ore]);
+    });
+    //println!("{:?}", map+map2);
     let deck = Deck {
         resource_cards: map,
         research_cards: buyable::development_card::DevelopmentCard::create_deck()
     };
     println!("{:?}", deck);
-    //println!("Town price: {:?}", get_cost(TypeBuyable::Town));
+    println!("Town price: {:?}", City::get_cost());
     deck.research_cards[0].effect();
     let r = buyable::road::Road::new(Coord{x:1,y:1}, Coord{x:2,y:2});
     println!("{:?}", r);
@@ -46,5 +49,22 @@ fn main() {
     println!("{:?}, {}", s, s.point());
     let c = s.evolve_town();
     println!("{:?}, {}", c, c.point());
+    println!("----");
+    println!("----");
+    println!("----");
+    let mut map = resource::ResourceDeck(enum_map! {
+        resource::Resource::Grain => 32,
+        _ => 0,
+    });
+    let map2 = resource::ResourceDeck(enum_map! {
+        resource::Resource::Grain => 4,
+        resource::Resource::Lumber => 1,
+        _ => 0,
+    });
+    println!("{:?}", map);
+    map.add(map2);
+    println!("{:?}", map);
+    println!("{:?}", map.0[resource::Resource::Ore]);
+    //println!("{:?}", map2.0[resource::Resource::Lumber]);
 }
 

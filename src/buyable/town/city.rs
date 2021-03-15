@@ -37,10 +37,10 @@ impl super::Town for City {
 impl Buyable for City  {
     #[inline]
     fn get_cost() ->ResourceDeck {
-        enum_map! {
+        ResourceDeck(enum_map! {
             Resource::Ore => 3,
             Resource::Grain => 2,
             _ => 0,
-        }
+        })
     }
 }
