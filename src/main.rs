@@ -67,9 +67,9 @@ fn main() {
         _ => 0,
     });
     println!("{:?}", map);
-    map = map + map2;
+    map = map - map2;
     println!("{:?}", map);
-    map += map3;
+    map -= map3;
     println!("{:?}", map);
     println!("{:?}", map.0[resource::Resource::Ore]);
     //println!("{:?}", map2.0[resource::Resource::Lumber]);
