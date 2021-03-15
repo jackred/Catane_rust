@@ -61,8 +61,15 @@ fn main() {
         resource::Resource::Lumber => 1,
         _ => 0,
     });
+    let map3 = resource::ResourceDeck(enum_map! {
+        resource::Resource::Grain => 9,
+        resource::Resource::Lumber => 12,
+        _ => 0,
+    });
     println!("{:?}", map);
-    map.add(map2);
+    map = map + map2;
+    println!("{:?}", map);
+    map += map3;
     println!("{:?}", map);
     println!("{:?}", map.0[resource::Resource::Ore]);
     //println!("{:?}", map2.0[resource::Resource::Lumber]);
