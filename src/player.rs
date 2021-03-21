@@ -6,15 +6,28 @@ use crate::utility::{Deck};
 
 #[derive(Debug)]
 pub struct Player {
-    name: String,
-    card: Deck,
-    buildings: Vec<i32>
+    pub name: String,
+    pub cards: Deck,
+    pub buildings: Vec<i32>
 }
 
 impl Player {
-    pub fn add_resources(&self, resources: ResourceDeck){}
-    pub fn rm_resources(&self, resources: ResourceDeck){}
-    pub fn gain_resources(&self, tiles: Vec<Tile>){}
+    pub fn add_resources(&mut self, resources: ResourceDeck){
+        self.cards.resource_cards += resources;
+    }
+    pub fn sub_resources(&mut self, resources: ResourceDeck){
+        self.cards.resource_cards -= resources;
+    }
+    pub fn gain_resources(&mut self, tiles: Vec<Tile>){
+        for tile in &tiles {
+            for town in tile.towns.iter() {
+                if town.get_player() == 1 { // todo: == self
+                    self.add_resources(
+                        ResourceDeck::new_vec(vec![(tile.resource, town.resource_multiplier())]));
+                }
+            }
+        }
+    }
     pub fn buy(&self, to_buy: i32){} // maybe redo struct
     pub fn can_buy(&self, cost: ResourceDeck){}
     pub fn play_card(&self, card: DevelopmentCard){} // useless?

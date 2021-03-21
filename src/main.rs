@@ -17,6 +17,12 @@ use buyable::Buyable;
 use buyable::town::Town;
 use buyable::town::city::City;
 
+enum Message {
+    Quit,
+    Move { x: i32, y: i32 },
+    Write(String),
+    ChangeColor(i32, i32, i32),
+}
 
 fn main() {
     println!("Please, enter your name: ");
@@ -39,9 +45,9 @@ fn main() {
     println!("{:?}", deck);
     println!("Town price: {:?}", City::get_cost());
     deck.research_cards[0].effect();
-    let r = buyable::road::Road::new(Coord{x:1,y:1}, Coord{x:2,y:2});
+    let r = buyable::road::Road::new(Coord{x:1,y:1}, Coord{x:2,y:2}, 1);
     println!("{:?}", r);
-    let r2 = buyable::road::Road::new(Coord{x:1,y:0}, Coord{x:8,y:-8});
+    let r2 = buyable::road::Road::new(Coord{x:1,y:0}, Coord{x:8,y:-8}, 1);
     println!("{:?}", r2);
     println!("{:?}", r.is_connected(&r2));
     println!("{:?}", r2.is_connected(&r));
@@ -69,9 +75,37 @@ fn main() {
     println!("{:?}", map);
     map = map - map2;
     println!("{:?}", map);
-    map -= map3;
     println!("{:?}", map);
     println!("{:?}", map.0[resource::Resource::Ore]);
     //println!("{:?}", map2.0[resource::Resource::Lumber]);
+    println!("----");
+    println!("----");
+    let mut player = player::Player{name: "Dorian".to_string(), cards: deck, buildings: vec![]};
+    println!("{:?}", player);
+    println!("{:?}", player.cards.resource_cards);
+    player.add_resources(resource::ResourceDeck(enum_map! {
+        resource::Resource::Grain => 9,
+        resource::Resource::Lumber => 12,
+        _ => 0,
+    }));
+    println!("{:?}", player.cards.resource_cards);
+    let teci: Box<dyn buyable::town::Town> = Box::new(buyable::town::city::City::new(Coord{x: 5, y: 7}, 1, None));
+    let tile = map::tile::Tile{resource: resource::Resource::Grain, towns: vec![teci], coord: Coord{x: 5, y: 7}};
+    player.gain_resources(vec![]);
+    println!("{:?}", player.cards.resource_cards);
+    player.gain_resources(vec![tile]);
+    println!("{:?}", player.cards.resource_cards);
+    let res = resource::Resource::Grain;
+    println!("res: {:?}", res);
+    //println!("{:?}", map.0[res]);
+    println!("{:?}", enum_map! {
+        resource::Resource::Grain if res == resource::Resource::Grain => 9,
+        resource::Resource::Lumber if res == resource::Resource::Lumber => 12,
+        _ => 0,
+    });
+    println!("{:?}", resource::ResourceDeck::new_vec(vec![(resource::Resource::Grain, 4)]));
+    let teci: Box<dyn buyable::town::Town> = Box::new(buyable::town::city::City::new(Coord{x: 5, y: 7}, 2, None));
+    println!("-----");
+    println!("{:?}", teci.resource_multiplier());
 }
 
