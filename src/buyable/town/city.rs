@@ -17,10 +17,6 @@ impl City {
             harbor: harbor
         }
     }
-    
-    pub fn get_player(&self) -> i32 {
-        self.player
-    }
 }
 
 impl super::Town for City {
@@ -31,6 +27,10 @@ impl super::Town for City {
     #[inline]
     fn resource_multiplier(&self) -> i32 {
         2
+    }
+    
+    fn get_player(&self) -> i32 {
+        self.player
     }
 }
 

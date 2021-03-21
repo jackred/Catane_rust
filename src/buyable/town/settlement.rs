@@ -18,10 +18,7 @@ impl Settlement {
             harbor: harbor
         }
     }
-    
-    pub fn get_player(&self) -> i32 {
-        self.player
-    }
+
 
     pub fn evolve_town(self) -> City {
         City::new(self.location, self.player, self.harbor)
@@ -37,6 +34,10 @@ impl super::Town for Settlement {
     #[inline]
     fn resource_multiplier(&self) -> i32 {
         1
+    }
+
+    fn get_player(&self) -> i32 {
+        self.player
     }
 }
 
