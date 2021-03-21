@@ -5,16 +5,18 @@ use crate::utility::{Coord};
 type CoordRoad =  (Coord, Coord);
 
 #[derive(Debug)]
-pub struct Road {
+pub struct Road { 
     location: CoordRoad,
-    connected: Vec<Road>
+    connected: Vec<Road>,
+    player: i32
 }
 
 impl Road {
-    pub fn new(north_coord: Coord, south_coord: Coord) -> Road {
+    pub fn new(north_coord: Coord, south_coord: Coord, player: i32) -> Road {
         Road {
             location: (north_coord, south_coord),
-            connected: vec!()
+            connected: vec!(),
+            player: player
         }
     }
 
