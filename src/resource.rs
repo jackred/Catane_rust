@@ -77,6 +77,7 @@ impl PartialOrd for ResourceDeck {
     fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
         let mut res = None;
         for (key, value) in &self.0 {
+            println!("key: {:?}", &key);
             let tmp = value.cmp(&other.0[key]);
             res = match (res, tmp) {
                 (None, a) => Some(a),
@@ -86,6 +87,9 @@ impl PartialOrd for ResourceDeck {
                 (a, b) if b == Ordering::Equal => a,
                 (Some(a), b) if a == Ordering::Equal => Some(b),
                 _ => None,
+            };
+            if res.is_none() {
+                break;
             }
         }
         res
