@@ -1,7 +1,8 @@
 use enum_map::EnumMap;
 use std::ops::{Add, AddAssign, Sub, SubAssign};
+use std::cmp::Ordering;
 
-#[derive(Debug, Enum, PartialEq, Eq, Copy, Clone)]
+#[derive(Debug, Enum, PartialEq, Eq, PartialOrd, Ord, Copy, Clone)]
 pub enum Resource {
     Grain,
     Lumber,
@@ -10,7 +11,7 @@ pub enum Resource {
     Brick,
 }
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq, Eq)]
 pub struct ResourceDeck(pub EnumMap<Resource, i32>);
 
 impl ResourceDeck {
@@ -69,5 +70,24 @@ impl SubAssign for ResourceDeck {
         for (key, value) in &mut self.0 {
             *value -= other.0[key]
         }
+    }
+}
+
+impl PartialOrd for ResourceDeck {
+    fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
+        let mut res = None;
+        for (key, value) in &self.0 {
+            let tmp = value.cmp(&other.0[key]);
+            res = match (res, tmp) {
+                (None, a) => Some(a),
+                (Some(Ordering::Greater), Ordering::Less)
+                    | (Some(Ordering::Less), Ordering::Greater) => None,
+                (Some(a), b) if b == a => Some(a),
+                (a, b) if b == Ordering::Equal => a,
+                (Some(a), b) if a == Ordering::Equal => Some(b),
+                _ => None,
+            }
+        }
+        res
     }
 }
