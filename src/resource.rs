@@ -22,7 +22,6 @@ impl ResourceDeck {
             Resource::Ore => ore,
             Resource::Wool => wool,
             Resource::Brick => brick,
-
         })
     }
 

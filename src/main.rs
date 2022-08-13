@@ -14,17 +14,30 @@ mod map;
 
 use utility::{Coord, Deck, roll_6_dices};
 use buyable::Buyable;
+use map::tile;
 use buyable::town::Town;
+use buyable::road::Road;
 use buyable::town::city::City;
+use buyable::town::settlement::Settlement;
 
-enum Message {
-    Quit,
-    Move { x: i32, y: i32 },
-    Write(String),
-    ChangeColor(i32, i32, i32),
+
+fn test() {
+    println!("test!");
+    let mut my_resource = resource::ResourceDeck(enum_map! {
+        resource::Resource::Grain => 3,
+	resource::Resource::Lumber => 1,
+	resource::Resource::Ore => 2,
+	resource::Resource::Brick => 1,
+        _ => 0,
+    });
+    println!("Can I buy a city? {}", my_resource > City::get_cost());
+    println!("Can I buy a settlement? {}", my_resource > Settlement::get_cost());
+    println!("Can I buy a road? {}", my_resource > Road::get_cost());
+    println!("end test!\n\n");
 }
 
 fn main() {
+    test();
     println!("Please, enter your name: ");
     let mut name = String::new(); 
     io::stdin().read_line(&mut name)
@@ -90,7 +103,7 @@ fn main() {
     }));
     println!("{:?}", player.cards.resource_cards);
     let teci: Box<dyn buyable::town::Town> = Box::new(buyable::town::city::City::new(Coord{x: 5, y: 7}, 1, None));
-    let tile = map::tile::Tile{resource: resource::Resource::Grain, towns: vec![teci], coord: Coord{x: 5, y: 7}};
+    let tile = map::tile::Tile{hex: tile::TileType::Field, towns: vec![teci], coord: Coord{x: 5, y: 7}, number: 2};
     player.gain_resources(vec![]);
     println!("{:?}", player.cards.resource_cards);
     player.gain_resources(vec![tile]);

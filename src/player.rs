@@ -18,14 +18,18 @@ impl Player {
     pub fn sub_resources(&mut self, resources: ResourceDeck){
         self.cards.resource_cards -= resources;
     }
+    // redo
+    // weird way
     pub fn gain_resources(&mut self, tiles: Vec<Tile>){
         for tile in &tiles {
-            for town in tile.towns.iter() {
-                if town.get_player() == 1 { // todo: == self
-                    self.add_resources(
-                        ResourceDeck::new_vec(vec![(tile.resource, town.resource_multiplier())]));
-                }
-            }
+	    if tile.has_resource(){
+		for town in tile.towns.iter() {
+                    if town.get_player() == 1 { // todo: == self
+			self.add_resources(
+                            ResourceDeck::new_vec(vec![(tile.get_resource().unwrap(), town.resource_multiplier())]));
+                    }
+		}
+	    }
         }
     }
     pub fn buy(&self, to_buy: i32){} // maybe redo struct

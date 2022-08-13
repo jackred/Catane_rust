@@ -19,7 +19,10 @@ impl Road {
             player: player
         }
     }
-
+    // not sure of that
+    // I feel like I did, are the 2 spots connected
+    // rather than equal
+    // which may totally be a mistake xD
     pub fn is_connected(&self, road: &Road) -> bool {
         self.location.0.is_connected(&road.location.0)
             ||  self.location.0.is_connected(&road.location.1)

@@ -1,6 +1,7 @@
 pub mod tile;
 use tile::Tile;
 use crate::buyable::{town::Town, road::Road};
+use crate::utility::{Coord};
 
 
 #[derive(Debug)]
@@ -19,5 +20,22 @@ impl Map {
             self.thief = new_position;
         }
         res
+    }
+
+    fn create_tiles_arrays() -> Vec<Vec<Tile>>{
+	let mut map = vec![];
+	let schema = [3, 4, 5, 4, 3];
+	for n in 0..5 {
+	    map.push(vec![]);
+	    for m in 0..schema[n] {
+		if n == 2 && m == 2 {
+		    map[n].push(Tile{hex: tile::TileType::Desert, towns: vec![], coord: Coord{y: n as i32, x:m}, number:0})
+		}
+		//map[n].push(Tile);
+	    }
+	}
+	
+	
+	return map;
     }
 }
